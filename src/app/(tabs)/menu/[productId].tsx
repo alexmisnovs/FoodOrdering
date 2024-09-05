@@ -34,6 +34,7 @@ const ProductDetailScreen = () => {
         {product.price}
       </Text>
       <Text>Select Size:</Text>
+      {/* todo: move the sizes into its own component */}
       <View style={styles.sizes}>
         {PIZZA_SIZES.map(size => (
           <Pressable onPress={() => setSelectedSize(size)} style={[styles.size, { backgroundColor: selectedSize === size ? "gainsboro" : "white " }]} key={size}>
