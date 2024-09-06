@@ -1,18 +1,17 @@
 import { useContext, createContext, PropsWithChildren, useState } from "react";
 import { CartItem, Product } from "../types";
+import { randomUUID } from "expo-crypto";
 
 export interface iCart {
   items: CartItem[];
   addItem: (product: Product, size: CartItem["size"]) => void;
-  removeItem: (product: Product) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  updateQuantity: (itemId: string, amount: 1 | -1) => void;
 }
 
 const CartContext = createContext<iCart>({
   items: [],
   addItem: () => {},
-  updateQuantity: () => {},
-  removeItem: () => {}
+  updateQuantity: () => {}
 });
 
 const CartProvider = ({ children }: PropsWithChildren) => {
@@ -20,10 +19,16 @@ const CartProvider = ({ children }: PropsWithChildren) => {
 
   const addItem = (product: Product, size: CartItem["size"]) => {
     //todo check if item already exists in cart increment quantity
-    if (items.some(item => item.product_id === product.id && item.size === size)) return;
+
+    const existingItem = items.find(item => item.product_id === product.id && item.size === size);
+
+    if (existingItem) {
+      updateQuantity(existingItem.id, 1);
+      return;
+    }
     // generate new id for the cart item
     const newCartItem: CartItem = {
-      id: Math.random().toString(),
+      id: randomUUID(),
       product,
       size,
       quantity: 1,
@@ -31,18 +36,20 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     };
 
     setItems([newCartItem, ...items]);
-
-    console.log(items);
   };
 
-  const removeItem = (product: Product) => {
-    console.log(product);
-  };
-  const updateQuantity = (id: string, quantity: number) => {
-    console.log(id, quantity);
+  const updateQuantity = (itemId: string, amount: 1 | -1) => {
+    const updatedItems = items.map(item => (item.id !== itemId ? item : { ...item, quantity: item.quantity + amount })).filter(item => item.quantity > 0);
+
+    setItems(updatedItems);
+
+    const item = items.find(item => item.id === itemId);
+    if (!item) return;
+
+    // console.log(itemId, amount);
   };
 
-  return <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity }}>{children}</CartContext.Provider>;
+  return <CartContext.Provider value={{ items, addItem, updateQuantity }}>{children}</CartContext.Provider>;
 };
 export const useCart = () => {
   return useContext(CartContext);
