@@ -2,7 +2,7 @@ import { StyleSheet, Image, Pressable } from "react-native";
 import { Text, View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { Product } from "@/src/types";
-import { Link } from "expo-router";
+import { Href, Link, useSegments } from "expo-router";
 import { CURRENCY_SYMBOL } from "../config/general";
 
 type ProductListItemProps = {
@@ -14,8 +14,13 @@ export const defaultPizzaImage = "https://notjustdev-dummy.s3.us-east-2.amazonaw
 export default function ProductListItem({ product }: ProductListItemProps) {
   //todo: add image placeholder if no image is found
   if (!product.image) product.image = defaultPizzaImage;
+
+  // to understand are we on user or admin side (user) or (admin)
+  const segments = useSegments();
+  // console.log(segments);
+
   return (
-    <Link href={`/menu/${product.id}`} asChild>
+    <Link href={`/${segments[0]}/menu/${product.id}` as any} asChild>
       <Pressable style={styles.container}>
         <Image style={styles.image} source={{ uri: product.image }} resizeMode="contain" />
         <Text style={styles.title}>{product.name}</Text>
