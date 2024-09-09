@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
-import { Link, Stack, useRouter, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import products from "@/assets/data/products";
@@ -9,17 +9,9 @@ import { useCart } from "@/src/providers/CartProvider";
 import Colors from "@/src/constants/Colors";
 
 const ProductDetailScreen = () => {
-  const router = useRouter();
-  // get product from the router
   const { productId } = useLocalSearchParams();
   //find products in the dummy file
   const product = products.find(p => p.id.toString() === productId);
-
-  // get cart
-  const { addItem } = useCart();
-
-  // add item to cart
-
   // check if product exists first
   if (!product) return <Text>Product not found</Text>;
 
