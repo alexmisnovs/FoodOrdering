@@ -1,17 +1,21 @@
-import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
+import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
 import { useState } from "react";
+
 import { CURRENCY_SYMBOL } from "@/src/config/general";
 import Button from "@/src/components/Button";
 import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState<string | null>(null);
+
+  const { productId } = useLocalSearchParams();
+  const isUpdating = !!productId;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -64,9 +68,33 @@ const CreateProductScreen = () => {
     resetForm();
   };
 
+  const onUpdate = () => {};
+
+  const onSubmit = () => {
+    if (isUpdating) {
+      onUpdate();
+    } else {
+      onCreate();
+    }
+  };
+
+  const onDelete = () => {
+    console.warn("Delete product");
+  };
+  const confirmDelete = () => {
+    Alert.alert("Delete Product", "Are you sure you want to delete this product?", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      { text: "Delete", style: "destructive", onPress: onDelete }
+    ]);
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      <Stack.Screen options={{ title: "Create Product" }} />
+      <Stack.Screen options={{ title: isUpdating ? "Update Product" : "Create Product" }} />
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
         <View style={styles.container}>
@@ -84,7 +112,12 @@ const CreateProductScreen = () => {
           {/* Errors */}
           <Text style={styles.error}>{errors}</Text>
 
-          <Button text="Create" onPress={onCreate} />
+          <Button text={isUpdating ? "Update Product" : "Create Product"} onPress={onSubmit} />
+          {isUpdating && (
+            <Text onPress={confirmDelete} style={styles.textButton}>
+              Delete Product
+            </Text>
+          )}
         </View>
       </KeyboardAvoidingView>
     </ScrollView>
