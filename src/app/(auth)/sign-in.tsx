@@ -3,11 +3,10 @@ import { useState } from "react";
 
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
-import { Link, Stack, useRouter } from "expo-router";
+import { Link, Stack } from "expo-router";
+import { validateEmail } from "@/src/helpers/auth";
 
 const SignInScreen = () => {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
@@ -23,6 +22,10 @@ const SignInScreen = () => {
 
     if (!email) {
       setErrors("Email is required");
+      return false;
+    }
+    if (!validateEmail(email)) {
+      setErrors("Must be a valid email");
       return false;
     }
     if (!password) {
@@ -50,10 +53,10 @@ const SignInScreen = () => {
         <View style={styles.container}>
           {/* Email */}
           <Text style={styles.label}>Email</Text>
-          <TextInput value={email} onChangeText={setEmail} style={styles.input} />
+          <TextInput keyboardType="email-address" textContentType={"emailAddress"} autoCapitalize="none" autoCorrect={false} value={email} onChangeText={setEmail} returnKeyType="next" autoFocus={true} style={styles.input} />
           {/* Pass */}
           <Text style={styles.label}>Passowrd</Text>
-          <TextInput value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
+          <TextInput value={password} onChangeText={setPassword} secureTextEntry returnKeyType="go" style={styles.input} />
           {/* Errors */}
           <Text style={styles.error}>{errors}</Text>
 

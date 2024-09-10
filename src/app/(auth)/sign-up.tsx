@@ -6,6 +6,8 @@ import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { Link, Stack, useRouter } from "expo-router";
 
+import { validateEmail, validatePassword } from "@/src/helpers/auth";
+
 const SignUpScreen = () => {
   const router = useRouter();
 
@@ -20,9 +22,6 @@ const SignUpScreen = () => {
     setconfrimPassword("");
     setErrors("");
   };
-
-  const passwordsMatch = password === confrimPassword;
-
   const validateInput = (): boolean => {
     setErrors("");
 
@@ -30,11 +29,24 @@ const SignUpScreen = () => {
       setErrors("Email is required");
       return false;
     }
+    if (!validateEmail(email)) {
+      setErrors("Must be a valid email");
+      return false;
+    }
     if (!password) {
       setErrors("Password is missing");
       return false;
     }
-    if (!passwordsMatch) {
+    if (!confrimPassword) {
+      setErrors("Confirm password is missing");
+      return false;
+    }
+    //disabled for now, for testing
+    // if (!validatePassword(password)) {
+    //   setErrors("Password must be at least 8 characters long");
+    //   return false;
+    // }
+    if (password !== confrimPassword) {
       setErrors("Passwords do not match");
       return false;
     }
@@ -60,7 +72,7 @@ const SignUpScreen = () => {
         <View style={styles.container}>
           {/* Email */}
           <Text style={styles.label}>Email </Text>
-          <TextInput value={email} onChangeText={setEmail} style={styles.input} placeholder="Email" />
+          <TextInput keyboardType="email-address" textContentType={"emailAddress"} autoCapitalize="none" autoCorrect={false} value={email} onChangeText={setEmail} returnKeyType="next" autoFocus={true} style={styles.input} />
           {/* Password */}
           <Text style={styles.small}>Note to self: Don't use password auths</Text>
 
