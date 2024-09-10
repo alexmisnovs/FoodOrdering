@@ -50,7 +50,7 @@ const orders: Order[] = [
   {
     id: 23445,
     created_at: now.subtract(3, "weeks").toISOString(),
-    total: 11.4,
+    total: 112.4,
     status: "Delivered",
     user_id: "1",
     order_items: [

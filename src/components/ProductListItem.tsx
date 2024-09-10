@@ -2,14 +2,12 @@ import { StyleSheet, Image, Pressable } from "react-native";
 import { Text, View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { Product } from "@/src/types";
-import { Href, Link, useSegments } from "expo-router";
-import { CURRENCY_SYMBOL } from "../config/general";
+import { Link, useSegments } from "expo-router";
+import { CURRENCY_SYMBOL, defaultPizzaImage } from "../config/general";
 
 type ProductListItemProps = {
   product: Product;
 };
-
-export const defaultPizzaImage = "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png";
 
 export default function ProductListItem({ product }: ProductListItemProps) {
   //todo: add image placeholder if no image is found

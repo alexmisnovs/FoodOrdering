@@ -5,8 +5,8 @@ import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 
 import products from "@/assets/data/products";
-import { defaultPizzaImage } from "@/src/components/ProductListItem";
-import { CURRENCY_SYMBOL, PIZZA_SIZES } from "@/src/config/general";
+
+import { CURRENCY_SYMBOL, defaultPizzaImage, PIZZA_SIZES } from "@/src/config/general";
 import Button from "@/src/components/Button";
 import { useCart } from "@/src/providers/CartProvider";
 import { PizzaSize } from "@/src/types";

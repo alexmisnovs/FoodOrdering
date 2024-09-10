@@ -3,9 +3,9 @@ import React from "react";
 import Colors from "../constants/Colors";
 import { CartItem } from "../types";
 import { Link } from "expo-router";
-import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import { FontAwesome } from "@expo/vector-icons";
 import { useCart } from "../providers/CartProvider";
+import { defaultPizzaImage } from "../config/general";
 
 type CartListItemProps = {
   cartItem: CartItem;
