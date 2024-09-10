@@ -6,6 +6,6 @@ import OrderListItem from "@/src/components/OrderListItem";
 export default function MenuScreen() {
   // const product = products[1];
   //comment
-
-  return <FlatList data={orders} renderItem={({ item }) => <OrderListItem order={item} />} numColumns={1} contentContainerStyle={{ gap: 10, padding: 10 }} />;
+  const activeOrders = orders.filter(order => order.status !== "Delivered");
+  return <FlatList data={activeOrders} renderItem={({ item }) => <OrderListItem order={item} />} numColumns={1} contentContainerStyle={{ gap: 10, padding: 10 }} />;
 }

@@ -6,7 +6,7 @@ import Colors from "@/src/constants/Colors";
 export default function OrdersStack() {
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: "Orders" }} />
+      <Stack.Screen name="list" options={{ title: "List", headerShown: false }} />
     </Stack>
   );
 }

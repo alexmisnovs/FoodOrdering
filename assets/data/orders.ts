@@ -31,6 +31,31 @@ const orders: Order[] = [
     ]
   },
   {
+    id: 23125,
+    created_at: now.subtract(15, "hour").toISOString(),
+    total: 131.4,
+    status: "Delivering",
+    user_id: "1",
+    order_items: [
+      {
+        id: 1,
+        order_id: 23125,
+        size: "S",
+        quantity: 3,
+        product_id: products[1].id,
+        products: products[1]
+      },
+      {
+        id: 2,
+        order_id: 23125,
+        size: "L",
+        quantity: 4,
+        product_id: products[3].id,
+        products: products[3]
+      }
+    ]
+  },
+  {
     id: 32145,
     created_at: now.subtract(3, "days").toISOString(),
     total: 11.4,
@@ -44,6 +69,23 @@ const orders: Order[] = [
         quantity: 2,
         product_id: products[3].id,
         products: products[3]
+      }
+    ]
+  },
+  {
+    id: 32147,
+    created_at: now.subtract(13, "days").toISOString(),
+    total: 12.2,
+    status: "Delivered",
+    user_id: "2",
+    order_items: [
+      {
+        id: 1,
+        order_id: 32147,
+        size: "S",
+        quantity: 3,
+        product_id: products[7].id,
+        products: products[7]
       }
     ]
   },
@@ -77,6 +119,14 @@ const orders: Order[] = [
         quantity: 1,
         product_id: products[8].id,
         products: products[8]
+      },
+      {
+        id: 4,
+        order_id: 23445,
+        size: "XL",
+        quantity: 2,
+        product_id: products[9].id,
+        products: products[9]
       }
     ]
   }
