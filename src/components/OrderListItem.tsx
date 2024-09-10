@@ -21,8 +21,8 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
 
   return (
     <Link href={`/${segments[0]}/orders/${order.id}` as any} asChild>
-      <Pressable style={styles.mainContainer}>
-        <View style={styles.container}>
+      <Pressable style={styles.container}>
+        <View>
           <Text style={styles.title}>Order: {order.id}</Text>
           {/* Format total to 2 decimals  */}
           <Text style={styles.price}>
@@ -30,7 +30,7 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
             {order.total.toFixed(2)}
           </Text>
         </View>
-        <View style={styles.container}>
+        <View>
           <Text style={styles.orderStatus}>{order.status}</Text>
           <Text style={styles.time}>{relativeTime}</Text>
         </View>
@@ -42,21 +42,15 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
 export default OrderListItem;
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    flexDirection: "row",
-    maxWidth: "100%",
-    // margin: 5,
+  container: {
     backgroundColor: "white",
     padding: 10,
-    borderRadius: 20
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
   },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingTop: 5,
-    paddingBottom: 5
-  },
+
   image: {
     width: "100%",
     aspectRatio: 1
