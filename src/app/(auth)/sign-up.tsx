@@ -1,10 +1,8 @@
-import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
+import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
 import { useState } from "react";
 
-import { CURRENCY_SYMBOL } from "@/src/config/general";
 import Button from "@/src/components/Button";
-import { defaultPizzaImage } from "@/src/components/ProductListItem";
-import * as ImagePicker from "expo-image-picker";
+
 import Colors from "@/src/constants/Colors";
 import { Link, Stack, useRouter } from "expo-router";
 
@@ -50,7 +48,7 @@ const SignUpScreen = () => {
     }
 
     // save to the database
-    console.log(email, password);
+    console.log(email, password, confrimPassword);
     resetForm();
   };
 
@@ -60,7 +58,7 @@ const SignUpScreen = () => {
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}>
         <View style={styles.container}>
-          {/* Name input field */}
+          {/* Email */}
           <Text style={styles.label}>Email </Text>
           <TextInput value={email} onChangeText={setEmail} style={styles.input} placeholder="Email" />
           {/* Password */}

@@ -22,17 +22,16 @@ const SignInScreen = () => {
     setErrors("");
 
     if (!email) {
-      setErrors("Name is required");
+      setErrors("Email is required");
       return false;
     }
     if (!password) {
-      setErrors("Price is required");
+      setErrors("Password is missing");
       return false;
     }
 
     return true;
   };
-
   const onSignIn = () => {
     if (!validateInput()) {
       return;
@@ -49,12 +48,12 @@ const SignInScreen = () => {
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
         <View style={styles.container}>
-          {/* Name input field */}
+          {/* Email */}
           <Text style={styles.label}>Email</Text>
-          <TextInput value={email} onChangeText={setEmail} style={styles.input} placeholder="Name" />
-          {/* Price */}
+          <TextInput value={email} onChangeText={setEmail} style={styles.input} />
+          {/* Pass */}
           <Text style={styles.label}>Passowrd</Text>
-          <TextInput value={password} onChangeText={setPassword} keyboardType="numeric" style={styles.input} placeholder="9.99" />
+          <TextInput value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
           {/* Errors */}
           <Text style={styles.error}>{errors}</Text>
 
