@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator, Alert } from "react-native";
 import React from "react";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
@@ -6,34 +6,35 @@ import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../config/supabase";
 
 const index = () => {
-  const { session, loading } = useAuth();
-  // const router = useRouter();
+  const { session, loading, profile } = useAuth();
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+  // lets try to fech the profile
 
   if (!session) {
-    return <Redirect href={"/(auth)/sign-in"} />;
+    return <Redirect href={"/sign-in"} />;
   }
 
-  const handleSignOut = () => {
-    supabase.auth.signOut();
-    // router.replace("/(auth)/sign-in");
-  };
+  // ok lets now do the admin check
+  // @ts-ignore
+  const isAdmin = profile?.group === "ADMIN";
+
+  if (!isAdmin) {
+    return <Redirect href={"/(user)"} />;
+  }
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
-      <Text style={{ textAlign: "center" }}>Welcome {session?.user?.email}</Text>
       <Link href={"/(user)"} asChild>
         <Button text="User" />
       </Link>
       <Link href={"/(admin)"} asChild>
         <Button text="Admin" />
       </Link>
-      <Link href={"/(auth)/sign-in"} asChild>
-        <Button text="Sign in" />
-      </Link>
 
-      <Button text="Sign Out" onPress={handleSignOut} />
+      <Button onPress={() => supabase.auth.signOut()} text="Sign out" />
     </View>
   );
 };

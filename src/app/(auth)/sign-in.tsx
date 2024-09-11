@@ -1,9 +1,9 @@
 import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
-import { Link, Stack } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import { validateEmail } from "@/src/helpers/auth";
 
 import { supabase } from "@/src/config/supabase";
@@ -15,11 +15,15 @@ const SignInScreen = () => {
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const router = useRouter();
+
   const resetForm = () => {
     setEmail("");
     setPassword("");
     setErrors("");
   };
+
+  //check if session already exists, if yes - redirect
 
   const validateInput = (): boolean => {
     setErrors("");
@@ -49,6 +53,9 @@ const SignInScreen = () => {
 
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      //redirect to index manually
+
       // if we have got the signin error
       if (error) {
         Alert.alert(error.message);
@@ -65,6 +72,7 @@ const SignInScreen = () => {
     // Alert.alert("Success", "Logged in");
     setLoading(false);
     resetForm();
+    // router.navigate("/");
 
     // redirect to the home page or sign in
   };
