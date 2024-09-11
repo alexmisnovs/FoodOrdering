@@ -62,8 +62,7 @@ const SignInScreen = () => {
       return;
     }
     // we got to the success bit
-    Alert.alert("Success", "Logged in");
-    console.warn("Logged in");
+    // Alert.alert("Success", "Logged in");
     setLoading(false);
     resetForm();
 

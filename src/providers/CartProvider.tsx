@@ -55,4 +55,4 @@ export const useCart = () => {
   return useContext(CartContext);
 };
 
-export { CartProvider };
+export default CartProvider;
