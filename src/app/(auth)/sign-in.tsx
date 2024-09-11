@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
+import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
 import { useState } from "react";
 
 import Button from "@/src/components/Button";
@@ -6,10 +6,14 @@ import Colors from "@/src/constants/Colors";
 import { Link, Stack } from "expo-router";
 import { validateEmail } from "@/src/helpers/auth";
 
+import { supabase } from "@/src/config/supabase";
+import { AuthError } from "@supabase/supabase-js";
+
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
     setEmail("");
@@ -35,14 +39,35 @@ const SignInScreen = () => {
 
     return true;
   };
-  const onSignIn = () => {
+  const signInWithEmail = async () => {
+    setLoading(true);
     if (!validateInput()) {
+      setLoading(false);
       return;
     }
-
     // save to the database
-    console.warn(email, password);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      // if we have got the signin error
+      if (error) {
+        Alert.alert(error.message);
+        setLoading(false);
+        return;
+      }
+      // if we got an api error
+    } catch (error: AuthError | any) {
+      Alert.alert(error.message);
+      setLoading(false);
+      return;
+    }
+    // we got to the success bit
+    Alert.alert("Success", "Logged in");
+    console.warn("Logged in");
+    setLoading(false);
     resetForm();
+
+    // redirect to the home page or sign in
   };
 
   return (
@@ -56,11 +81,11 @@ const SignInScreen = () => {
           <TextInput keyboardType="email-address" textContentType={"emailAddress"} autoCapitalize="none" autoCorrect={false} value={email} onChangeText={setEmail} returnKeyType="next" autoFocus={true} style={styles.input} />
           {/* Pass */}
           <Text style={styles.label}>Passowrd</Text>
-          <TextInput value={password} onChangeText={setPassword} secureTextEntry returnKeyType="go" style={styles.input} />
+          <TextInput value={password} onChangeText={setPassword} textContentType="oneTimeCode" secureTextEntry returnKeyType="go" style={styles.input} />
           {/* Errors */}
           <Text style={styles.error}>{errors}</Text>
 
-          <Button text="Sign In" onPress={onSignIn} />
+          <Button text={loading ? "Loading..." : "Sign In"} onPress={signInWithEmail} disabled={loading} />
 
           <Link href={"/(auth)/sign-up/" as any} asChild>
             <Text style={styles.textButton}>Don't have an account? Sign up</Text>
