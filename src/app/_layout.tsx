@@ -7,7 +7,11 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/src/components/useColorScheme";
-import { CartProvider } from "../providers/CartProvider";
+import CartProvider from "../providers/CartProvider";
+import AuthProvider from "../providers/AuthProvider";
+
+import { Provider } from "react-redux";
+import { store } from "../store/store";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,12 +55,21 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <CartProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="cart" options={{ presentation: "modal" }} />
-        </Stack>
-      </CartProvider>
+      {/* todo move it to redux  */}
+      {/* <Provider store={store}> */}
+      <AuthProvider>
+        <CartProvider>
+          <Stack>
+            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+            <Stack.Screen name="(user)" options={{ headerShown: true }} />
+
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+
+            <Stack.Screen name="cart" options={{ presentation: "modal" }} />
+          </Stack>
+        </CartProvider>
+      </AuthProvider>
+      {/* </Provider> */}
     </ThemeProvider>
   );
 }

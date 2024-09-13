@@ -6,7 +6,9 @@
       "@/*": ["./*"],
       "@components/*": ["./src/components/*"],
       "@assets/*": ["./assets/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }
