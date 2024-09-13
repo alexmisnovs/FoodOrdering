@@ -10,8 +10,9 @@ import { useColorScheme } from "@/src/components/useColorScheme";
 import CartProvider from "../providers/CartProvider";
 import AuthProvider from "../providers/AuthProvider";
 
-import { Provider } from "react-redux";
-import { store } from "../store/store";
+// import { Provider } from "react-redux";
+// import { store } from "../store/store";
+import TanQueryProvider from "../providers/TanStackQueryProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -58,16 +59,18 @@ function RootLayoutNav() {
       {/* todo move it to redux  */}
       {/* <Provider store={store}> */}
       <AuthProvider>
-        <CartProvider>
-          <Stack>
-            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-            <Stack.Screen name="(user)" options={{ headerShown: true }} />
+        <TanQueryProvider>
+          <CartProvider>
+            <Stack>
+              <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+              <Stack.Screen name="(user)" options={{ headerShown: true }} />
 
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
 
-            <Stack.Screen name="cart" options={{ presentation: "modal" }} />
-          </Stack>
-        </CartProvider>
+              <Stack.Screen name="cart" options={{ presentation: "modal" }} />
+            </Stack>
+          </CartProvider>
+        </TanQueryProvider>
       </AuthProvider>
       {/* </Provider> */}
     </ThemeProvider>
