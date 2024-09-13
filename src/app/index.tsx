@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, Alert } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import React from "react";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
@@ -6,20 +6,21 @@ import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../config/supabase";
 
 const index = () => {
-  const { session, loading, profile } = useAuth();
+  const { session, loading, profile, isAdmin } = useAuth();
 
   if (loading) {
+    console.log("loading");
     return <ActivityIndicator />;
   }
-  // lets try to fech the profile
 
   if (!session) {
     return <Redirect href={"/sign-in"} />;
   }
 
-  // ok lets now do the admin check
-  // @ts-ignore
-  const isAdmin = profile?.group === "ADMIN";
+  if (!profile) {
+    console.log("ASD");
+  }
+  // so now I got here.. app does
 
   if (!isAdmin) {
     return <Redirect href={"/(user)"} />;

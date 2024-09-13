@@ -8,6 +8,9 @@ import { validateEmail } from "@/src/helpers/auth";
 
 import { supabase } from "@/src/config/supabase";
 import { AuthError } from "@supabase/supabase-js";
+import { useAuth } from "@/src/providers/AuthProvider";
+// try with redux
+import { useAppDispatch } from "@/src/store/reduxHooks";
 
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
@@ -16,6 +19,7 @@ const SignInScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const { session } = useAuth();
 
   const resetForm = () => {
     setEmail("");
@@ -53,7 +57,7 @@ const SignInScreen = () => {
 
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-
+      useAppDispatch();
       //redirect to index manually
 
       // if we have got the signin error
@@ -83,6 +87,7 @@ const SignInScreen = () => {
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
         <View style={styles.container}>
+          <Text style={styles.label}>Do I have anything in the session?: {session?.user.email}</Text>
           {/* Email */}
           <Text style={styles.label}>Email</Text>
           <TextInput keyboardType="email-address" textContentType={"emailAddress"} autoCapitalize="none" autoCorrect={false} value={email} onChangeText={setEmail} returnKeyType="next" autoFocus={true} style={styles.input} />

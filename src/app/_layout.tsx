@@ -10,6 +10,9 @@ import { useColorScheme } from "@/src/components/useColorScheme";
 import CartProvider from "../providers/CartProvider";
 import AuthProvider from "../providers/AuthProvider";
 
+import { Provider } from "react-redux";
+import { store } from "../store/store";
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
@@ -52,6 +55,8 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      {/* todo move it to redux  */}
+      {/* <Provider store={store}> */}
       <AuthProvider>
         <CartProvider>
           <Stack>
@@ -64,6 +69,7 @@ function RootLayoutNav() {
           </Stack>
         </CartProvider>
       </AuthProvider>
+      {/* </Provider> */}
     </ThemeProvider>
   );
 }

@@ -1,4 +1,3 @@
-import { View } from "@/src/components/Themed";
 import { FlatList } from "react-native";
 import products from "@assets/data/products";
 import ProductListItem from "@components/ProductListItem";
