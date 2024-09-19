@@ -5,36 +5,25 @@ import { Link, Redirect } from "expo-router";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../config/supabase";
 
-import * as SplashScreen from "expo-splash-screen";
-import { getProfile } from "../helpers/auth";
-
-SplashScreen.preventAutoHideAsync();
-
 const index = () => {
   const { session, loading, isAdmin } = useAuth();
 
+  console.log("loading from index", loading);
   console.log("session user from index", session?.user);
   console.log("isAdmin from index", isAdmin);
 
-  // const [isLoadingComplete, setLoadingComplete] = useState(true);
-  // const [isAdmin, setIsAdmin] = useState(false);
+  const [show, setShow] = useState(false);
 
-  // useEffect(() => {
-  //   if (session) {
-  //     getProfile(session).then(({ error, data }) => {
-  //       if (error) {
-  //         console.log("error LOADING profile from index", error);
-  //         setLoadingComplete(false);
-  //       }
-  //       if (data) {
-  //         console.log("data loading pROFILE FROM INDEX", data);
-  //         setIsAdmin(data.group === "ADMIN");
-  //         console.log("isAdmin ? ", isAdmin);
-  //         setLoadingComplete(false);
-  //       }
-  //     });
-  //   }
-  // }, [session]);
+  // stop login screen flickering
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShow(true);
+    }, 200);
+
+    return () => clearTimeout(timeout);
+  }, [show]);
+
+  if (!show) return null;
 
   if (loading) {
     return <ActivityIndicator />;
@@ -43,11 +32,8 @@ const index = () => {
   if (!session) {
     return <Redirect href={"/sign-in"} />;
   }
-  // console.log("isAdmin from index", isAdmin);
-  // // console.log("group from index", group);
 
   if (!isAdmin) {
-    console.log("Not admin from index");
     return <Redirect href={"/(user)"} />;
   }
 

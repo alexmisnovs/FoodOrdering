@@ -49,28 +49,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     fetchSession();
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      // setTimeout(async () => {
-      //   // await on other Supabase function here
-
-      //   // this runs right after the callback has finished
-      //   console.log("Event: ", _event, "Session: ", session?.token_type);
-
-      //   if (session) {
-      //     const { data } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
-      //     console.log("trying to call profile data: ", data);
-      //     if (data) {
-      //       setProfile(data);
-      //       console.log("User admin check from onAuthStateChange: ", data?.group === "ADMIN");
-      //       setIsAdmin(data?.group === "ADMIN");
-      //     }
-
-      //     setSession(session);
-      //   }
-
-      //   setLoading(false);
-
-      //   // setSupabaseEvent(_event);
-      // }, 0);
       console.log("Event: ", _event, "Session: ", session?.token_type);
       if (session) {
         supabase
@@ -88,8 +66,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
             }
           });
       }
-      setSession(null);
 
+      setSession(null);
       setLoading(false);
     });
   }, []);
