@@ -7,9 +7,6 @@ import { Link, Stack } from "expo-router";
 import { login, validateEmail } from "@/src/helpers/auth";
 
 import { AuthError } from "@supabase/supabase-js";
-import { useAuth } from "@/src/providers/AuthProviderV2";
-// try with redux
-// import { useAppDispatch } from "@/src/store/reduxHooks";
 
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
@@ -52,8 +49,6 @@ const SignInScreen = () => {
     }
 
     try {
-      // const { error } = await supabase.auth.signInWithPassword({ email, password });
-      // moving logic into helper
       const {
         error,
         data: { session }
@@ -64,20 +59,13 @@ const SignInScreen = () => {
         setLoading(false);
         return;
       }
-      // if (session) authenticate(session.access_token);
-      // if we got an api error
     } catch (error: AuthError | any) {
       Alert.alert(error.message);
       setLoading(false);
       return;
     }
-    // we got to the success bit
-    // Alert.alert("Success", "Logged in");
     setLoading(false);
     resetForm();
-    // router.navigate("/");
-
-    // redirect to the home page or sign in
   };
 
   return (

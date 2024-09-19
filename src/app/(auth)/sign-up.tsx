@@ -70,7 +70,6 @@ const SignUpScreen = () => {
     }
 
     try {
-      // const { error } = await supabase.auth.signUp({ email, password });
       const {
         error,
         data: { session }
@@ -81,15 +80,13 @@ const SignUpScreen = () => {
         setLoading(false);
         return;
       }
-      // if (session) authenticate(session.access_token);
+
       // if API failed
     } catch (error: AuthError | any) {
       Alert.alert(error.message);
       setLoading(false);
       return;
     }
-
-    // console.log(email, password, confrimPassword);
 
     Alert.alert("Success", "Check your email for the verification link");
     setLoading(false);
