@@ -42,3 +42,9 @@ export type Profile = {
   id: string;
   group: string;
 };
+
+export type User = {
+  id: string;
+  email: string;
+  profile: Profile;
+};

@@ -3,7 +3,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
 
 import Colors from "@/src/constants/Colors";
-import { useColorScheme } from "@/src/components/useColorScheme";
+
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import { useAuth } from "@/src/providers/AuthProvider";
 
@@ -13,13 +13,13 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>["nam
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   // make sure only admins can get here
   const { isAdmin } = useAuth();
 
   if (!isAdmin) {
     return <Redirect href={"/"} />;
   }
+
   return (
     <Tabs
       screenOptions={{

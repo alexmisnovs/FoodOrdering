@@ -6,8 +6,7 @@ import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { Link, Stack, useRouter } from "expo-router";
 
-import { validateEmail, validatePassword } from "@/src/helpers/auth";
-import { supabase } from "@/src/config/supabase";
+import { register, validateEmail, validatePassword } from "@/src/helpers/auth";
 import { AuthError } from "@supabase/supabase-js";
 
 const SignUpScreen = () => {
@@ -69,18 +68,20 @@ const SignUpScreen = () => {
       setLoading(false);
       return;
     }
-    // save to the database
-    // console.log(email, password, confrimPassword);
-    // return;
 
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      // const { error } = await supabase.auth.signUp({ email, password });
+      const {
+        error,
+        data: { session }
+      } = await register({ email, password });
       // if wrong credentials etc..
       if (error) {
         Alert.alert(error.message);
         setLoading(false);
         return;
       }
+      // if (session) authenticate(session.access_token);
       // if API failed
     } catch (error: AuthError | any) {
       Alert.alert(error.message);
