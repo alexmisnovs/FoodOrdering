@@ -72,7 +72,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setLoading(false);
     });
   }, []);
-  // useEffect(() => {
+
   //   supabase.auth
   //     .getSession()
   //     .then(res => {
