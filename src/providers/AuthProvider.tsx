@@ -84,10 +84,11 @@ export default function AuthProvider({ children }: PropsWithChildren) {
               setProfile(data);
               console.log("User admin check from onAuthStateChange: ", data?.group === "ADMIN");
               setIsAdmin(data?.group === "ADMIN");
+              setSession(session);
             }
           });
       }
-      setSession(session);
+      setSession(null);
 
       setLoading(false);
     });
