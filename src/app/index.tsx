@@ -8,9 +8,9 @@ import { supabase } from "../config/supabase";
 const index = () => {
   const { session, loading, isAdmin } = useAuth();
 
-  console.log("loading from index", loading);
-  console.log("session user from index", session?.user);
-  console.log("isAdmin from index", isAdmin);
+  // console.log("loading from index", loading);
+  // console.log("session user from index", session?.user);
+  // console.log("isAdmin from index", isAdmin);
 
   const [show, setShow] = useState(false);
 

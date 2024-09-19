@@ -49,6 +49,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     fetchSession();
 
     supabase.auth.onAuthStateChange((_event, session) => {
+      // setSession(session);
       console.log("Event: ", _event, "Session: ", session?.token_type);
       if (session) {
         supabase
@@ -71,6 +72,34 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setLoading(false);
     });
   }, []);
+  // useEffect(() => {
+  //   supabase.auth
+  //     .getSession()
+  //     .then(res => {
+  //       const {
+  //         data: { session }
+  //       } = res;
+  //       supabase.auth.onAuthStateChange((_event, session) => {
+  //         setSession(session);
+  //       });
+  //       setSession(session);
+  //       return session;
+  //     })
+  //     .then(session => {
+  //       if (session) {
+  //         supabase
+  //           .from("profiles")
+  //           .select("*")
+  //           .eq("id", session.user.id)
+  //           .single()
+  //           .then(res => {
+  //             const { data } = res;
+  //             setProfile(data || null);
+  //           });
+  //       }
+  //     })
+  //     .then(() => setLoading(false));
+  // }, []);
   // @ts-ignore
   return <AuthContext.Provider value={{ session, loading, profile, isAdmin }}>{children}</AuthContext.Provider>;
 }
