@@ -71,7 +71,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
       //   // setSupabaseEvent(_event);
       // }, 0);
-
+      console.log("Event: ", _event, "Session: ", session?.token_type);
       if (session) {
         supabase
           .from("profiles")

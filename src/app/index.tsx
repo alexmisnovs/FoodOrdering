@@ -13,6 +13,9 @@ SplashScreen.preventAutoHideAsync();
 const index = () => {
   const { session, loading, isAdmin } = useAuth();
 
+  console.log("session user from index", session?.user);
+  console.log("isAdmin from index", isAdmin);
+
   // const [isLoadingComplete, setLoadingComplete] = useState(true);
   // const [isAdmin, setIsAdmin] = useState(false);
 
