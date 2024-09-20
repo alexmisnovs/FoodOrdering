@@ -1,12 +1,12 @@
 import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
 import { useState } from "react";
 
-import { CURRENCY_SYMBOL } from "@/src/config/general";
+import { CURRENCY_SYMBOL, defaultPizzaImage } from "@/src/config/general";
 import Button from "@/src/components/Button";
-import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams } from "expo-router";
+import { useInsertProduct } from "@/src/api/products";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -16,6 +16,8 @@ const CreateProductScreen = () => {
 
   const { productId } = useLocalSearchParams();
   const isUpdating = !!productId;
+
+  const { mutate: insertProduct } = useInsertProduct();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -65,6 +67,11 @@ const CreateProductScreen = () => {
 
     // save to the database
     console.log(name, price);
+    insertProduct({
+      name,
+      price: parseFloat(price),
+      image
+    });
     resetForm();
   };
 
