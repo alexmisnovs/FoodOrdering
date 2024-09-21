@@ -1,12 +1,12 @@
 import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CURRENCY_SYMBOL, defaultPizzaImage } from "@/src/config/general";
 import Button from "@/src/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useInsertProduct } from "@/src/api/products";
+import { useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -14,10 +14,14 @@ const CreateProductScreen = () => {
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState<string | null>(null);
 
-  const { productId } = useLocalSearchParams();
+  const { productId: idString } = useLocalSearchParams();
+  const productId = parseFloat(typeof idString === "string" ? idString : idString[0]);
+
   const isUpdating = !!productId;
 
   const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { data: updatingProduct } = useProduct(productId);
 
   const router = useRouter();
 
@@ -36,6 +40,14 @@ const CreateProductScreen = () => {
       setImage(result.assets[0].uri);
     }
   };
+
+  useEffect(() => {
+    if (updatingProduct) {
+      setName(updatingProduct.name);
+      setPrice(updatingProduct.price.toString());
+      setImage(updatingProduct.image);
+    }
+  }, [updatingProduct]);
 
   const resetForm = () => {
     setName("");
@@ -85,7 +97,28 @@ const CreateProductScreen = () => {
     // resetForm();
   };
 
-  const onUpdate = () => {};
+  const onUpdate = () => {
+    if (!validateInput()) {
+      return;
+    }
+    updateProduct(
+      {
+        productId,
+        name,
+        price: parseFloat(price),
+        image
+      },
+      {
+        onSuccess: () => {
+          resetForm();
+          router.back();
+        },
+        onError(error) {
+          console.log(error);
+        }
+      }
+    );
+  };
 
   const onSubmit = () => {
     if (isUpdating) {
