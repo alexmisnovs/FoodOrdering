@@ -5,7 +5,7 @@ import { CURRENCY_SYMBOL, defaultPizzaImage } from "@/src/config/general";
 import Button from "@/src/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useInsertProduct } from "@/src/api/products";
 
 const CreateProductScreen = () => {
@@ -18,6 +18,8 @@ const CreateProductScreen = () => {
   const isUpdating = !!productId;
 
   const { mutate: insertProduct } = useInsertProduct();
+
+  const router = useRouter();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -67,12 +69,20 @@ const CreateProductScreen = () => {
 
     // save to the database
     console.log(name, price);
-    insertProduct({
-      name,
-      price: parseFloat(price),
-      image
-    });
-    resetForm();
+    insertProduct(
+      {
+        name,
+        price: parseFloat(price),
+        image
+      },
+      {
+        onSuccess: () => {
+          resetForm();
+          router.back();
+        }
+      }
+    );
+    // resetForm();
   };
 
   const onUpdate = () => {};
