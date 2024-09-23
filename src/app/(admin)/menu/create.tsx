@@ -6,7 +6,7 @@ import Button from "@/src/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
+import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -22,6 +22,7 @@ const CreateProductScreen = () => {
   const { mutate: insertProduct } = useInsertProduct();
   const { mutate: updateProduct } = useUpdateProduct();
   const { data: updatingProduct } = useProduct(productId);
+  const { mutate: deleteProduct } = useDeleteProduct(productId);
 
   const router = useRouter();
 
@@ -129,7 +130,16 @@ const CreateProductScreen = () => {
   };
 
   const onDelete = () => {
-    console.warn("Delete product");
+    deleteProduct(productId, {
+      onSuccess: () => {
+        resetForm();
+        router.replace("/(admin)");
+      },
+      onError(error) {
+        console.log(error);
+      }
+    });
+    console.warn("Deleting product");
   };
   const confirmDelete = () => {
     Alert.alert("Delete Product", "Are you sure you want to delete this product?", [
