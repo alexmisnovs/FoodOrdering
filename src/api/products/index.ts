@@ -1,11 +1,15 @@
 import { supabase } from "@/src/config/supabase";
-import { Product } from "@/src/types";
+import { Tables } from "@/src/database.types";
+// import { Product } from "@/src/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useProductList = () => {
   return useQuery({
     queryKey: ["products"],
+
     queryFn: async () => {
+      // I could override type it returns with .returns() function if I need to
+      // const { data, error } = await supabase.from("products").select("*").returns<Product[]>();
       const { data, error } = await supabase.from("products").select("*");
       if (error) {
         throw new Error(error.message);
@@ -16,7 +20,7 @@ export const useProductList = () => {
 };
 
 export const useProduct = (id: number) => {
-  return useQuery<Product>({
+  return useQuery<Tables<"products">>({
     queryKey: ["product", id],
     queryFn: async () => {
       const { data, error } = await supabase.from("products").select("*").eq("id", id).single();
