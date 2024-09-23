@@ -1,6 +1,8 @@
 import { useContext, createContext, PropsWithChildren, useState } from "react";
-import { CartItem, Product } from "../types";
+import { type CartItem, type Tables } from "../types";
 import { randomUUID } from "expo-crypto";
+
+type Product = Tables<"products">;
 
 export interface iCart {
   items: CartItem[];

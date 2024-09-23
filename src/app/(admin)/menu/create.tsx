@@ -1,12 +1,12 @@
 import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { CURRENCY_SYMBOL } from "@/src/config/general";
+import { CURRENCY_SYMBOL, defaultPizzaImage } from "@/src/config/general";
 import Button from "@/src/components/Button";
-import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -14,8 +14,17 @@ const CreateProductScreen = () => {
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState<string | null>(null);
 
-  const { productId } = useLocalSearchParams();
+  const { productId: idString } = useLocalSearchParams();
+  const productId = parseFloat(typeof idString === "string" ? idString : idString[0]);
+
   const isUpdating = !!productId;
+
+  const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { data: updatingProduct } = useProduct(productId);
+  const { mutate: deleteProduct } = useDeleteProduct(productId);
+
+  const router = useRouter();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -32,6 +41,14 @@ const CreateProductScreen = () => {
       setImage(result.assets[0].uri);
     }
   };
+
+  useEffect(() => {
+    if (updatingProduct) {
+      setName(updatingProduct.name);
+      setPrice(updatingProduct.price.toString());
+      setImage(updatingProduct.image);
+    }
+  }, [updatingProduct]);
 
   const resetForm = () => {
     setName("");
@@ -65,10 +82,44 @@ const CreateProductScreen = () => {
 
     // save to the database
     console.log(name, price);
-    resetForm();
+    insertProduct(
+      {
+        name,
+        price: parseFloat(price),
+        image
+      },
+      {
+        onSuccess: () => {
+          resetForm();
+          router.back();
+        }
+      }
+    );
+    // resetForm();
   };
 
-  const onUpdate = () => {};
+  const onUpdate = () => {
+    if (!validateInput()) {
+      return;
+    }
+    updateProduct(
+      {
+        productId,
+        name,
+        price: parseFloat(price),
+        image
+      },
+      {
+        onSuccess: () => {
+          resetForm();
+          router.back();
+        },
+        onError(error) {
+          console.log(error);
+        }
+      }
+    );
+  };
 
   const onSubmit = () => {
     if (isUpdating) {
@@ -79,7 +130,16 @@ const CreateProductScreen = () => {
   };
 
   const onDelete = () => {
-    console.warn("Delete product");
+    deleteProduct(productId, {
+      onSuccess: () => {
+        resetForm();
+        router.replace("/(admin)");
+      },
+      onError(error) {
+        console.log(error);
+      }
+    });
+    console.warn("Deleting product");
   };
   const confirmDelete = () => {
     Alert.alert("Delete Product", "Are you sure you want to delete this product?", [

@@ -5,20 +5,27 @@ import { supabase } from "@/src/config/supabase";
 import Button from "@/src/components/Button";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useRouter } from "expo-router";
+import { signOut } from "@/src/helpers/auth";
 
 export default function TabTwoScreen() {
   const { profile, session } = useAuth();
   const router = useRouter();
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/sign-in");
+  const handleLogout = async () => {
+    await signOut();
+
+    console.log("signed out, navigating now..");
+    router.replace("/" as any);
   };
 
   return (
     <View style={styles.container}>
-      <Button onPress={handleSignOut} text="Sign out" />
-      <Text style={styles.title}>Tab Two</Text>
+      <Text style={styles.title}>Profile</Text>
+      <Text style={styles.title}>{session?.user.email}</Text>
+      <Text style={styles.title}>{profile?.group}</Text>
+      <Button onPress={handleLogout} text="Sign out" />
+
+      <Text style={styles.title}>Tab Two Admin Version</Text>
     </View>
   );
 }

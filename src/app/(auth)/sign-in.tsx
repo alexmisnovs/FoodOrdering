@@ -1,25 +1,18 @@
 import { StyleSheet, Text, TextInput, View, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
-import { Link, Stack, useRouter } from "expo-router";
-import { validateEmail } from "@/src/helpers/auth";
+import { Link, Stack } from "expo-router";
+import { login, validateEmail } from "@/src/helpers/auth";
 
-import { supabase } from "@/src/config/supabase";
 import { AuthError } from "@supabase/supabase-js";
-import { useAuth } from "@/src/providers/AuthProvider";
-// try with redux
-import { useAppDispatch } from "@/src/store/reduxHooks";
 
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const router = useRouter();
-  const { session } = useAuth();
 
   const resetForm = () => {
     setEmail("");
@@ -49,36 +42,30 @@ const SignInScreen = () => {
   };
   const signInWithEmail = async () => {
     setLoading(true);
+
     if (!validateInput()) {
       setLoading(false);
       return;
     }
-    // save to the database
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      useAppDispatch();
-      //redirect to index manually
+      const {
+        error,
+        data: { session }
+      } = await login({ email, password });
 
-      // if we have got the signin error
       if (error) {
         Alert.alert(error.message);
         setLoading(false);
         return;
       }
-      // if we got an api error
     } catch (error: AuthError | any) {
       Alert.alert(error.message);
       setLoading(false);
       return;
     }
-    // we got to the success bit
-    // Alert.alert("Success", "Logged in");
     setLoading(false);
     resetForm();
-    // router.navigate("/");
-
-    // redirect to the home page or sign in
   };
 
   return (
@@ -87,7 +74,6 @@ const SignInScreen = () => {
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
         <View style={styles.container}>
-          <Text style={styles.label}>Do I have anything in the session?: {session?.user.email}</Text>
           {/* Email */}
           <Text style={styles.label}>Email</Text>
           <TextInput keyboardType="email-address" textContentType={"emailAddress"} autoCapitalize="none" autoCorrect={false} value={email} onChangeText={setEmail} returnKeyType="next" autoFocus={true} style={styles.input} />
