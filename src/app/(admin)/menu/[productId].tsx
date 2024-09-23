@@ -1,17 +1,15 @@
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-
-import products from "@/assets/data/products";
-import { defaultPizzaImage } from "@/src/components/ProductListItem";
-import { CURRENCY_SYMBOL } from "@/src/config/general";
-import { useCart } from "@/src/providers/CartProvider";
+import { CURRENCY_SYMBOL, defaultPizzaImage } from "@/src/config/general";
 import Colors from "@/src/constants/Colors";
+import { useProduct } from "@/src/api/products";
 
 const ProductDetailScreen = () => {
   const { productId } = useLocalSearchParams();
   //find products in the dummy file
-  const product = products.find(p => p.id.toString() === productId);
+  const { data: product, isLoading, error } = useProduct(parseInt(typeof productId === "string" ? productId : productId[0]));
+
   // check if product exists first
   if (!product) return <Text>Product not found</Text>;
 

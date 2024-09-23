@@ -1,12 +1,12 @@
 import { StyleSheet, Image, Pressable } from "react-native";
 import { Text, View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
-import { Product } from "@/src/types";
+import { Tables } from "@/src/types";
 import { Link, useSegments } from "expo-router";
 import { CURRENCY_SYMBOL, defaultPizzaImage } from "../config/general";
 
 type ProductListItemProps = {
-  product: Product;
+  product: Tables<"products">;
 };
 
 export default function ProductListItem({ product }: ProductListItemProps) {

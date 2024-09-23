@@ -4,7 +4,8 @@ import { supabase } from "../config/supabase";
 
 type AuthData = {
   session: Session | null;
-  profile: any | null;
+  authToken: string | null;
+  profile: any;
   loading: boolean;
   isAdmin: boolean;
 };
@@ -12,6 +13,7 @@ type AuthData = {
 const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
+  authToken: null,
   profile: null,
   isAdmin: false
 });
@@ -19,75 +21,85 @@ const AuthContext = createContext<AuthData>({
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (session: Session) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
-    console.log("found this profile from onAuthStateChange", data);
+  // const [supabaseEvent, setSupabaseEvent] = useState("INITIAL_SESSION");
 
-    setProfile(data || null);
-
-    const isAdmin = data?.group === "ADMIN";
-    setIsAdmin(isAdmin);
-
-    console.log("Admin status:", isAdmin);
-    console.log("Profile group:", data!.group);
-  };
-
-  const fetchSession = async () => {
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
-
-    setSession(session);
-
-    // if (!session) {
-    //   console.log("Session was not found, trying to fetch it again..");
-    //   // return;
-    //   const {
-    //     data: { session }
-    //   } = await supabase.auth.getSession();
-
-    //   setSession(session);
-    // }
-
-    if (session) {
-      // fetch profile
-      fetchProfile(session);
-    }
-    setLoading(false);
-  };
+  // maybe add session checking function..
 
   useEffect(() => {
-    //check if session is not null
+    const fetchSession = async () => {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      setSession(session);
+
+      if (session) {
+        // fetch profile
+        const { data } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+        setProfile(data || null);
+        setIsAdmin(data.group === "ADMIN");
+      }
+
+      setLoading(false);
+    };
+
     fetchSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, _session) => {
-      console.log(`Supbase auth event: ${event}`);
+    supabase.auth.onAuthStateChange((_event, session) => {
+      // setSession(session);
+      console.log("Event: ", _event, "Session: ", session?.token_type);
+      if (session) {
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data }) => {
+            console.log("trying to call profile data onAuthStateChange: ", data);
+            if (data) {
+              setProfile(data);
+              console.log("User admin check from onAuthStateChange: ", data?.group === "ADMIN");
+              setIsAdmin(data?.group === "ADMIN");
+              setSession(session);
+            }
+          });
+      }
 
-      if (event === "SIGNED_IN") {
-        //fetch session?
-        // first check the session
-        if (!session) fetchSession();
-        return;
-      }
-      if (event === "SIGNED_OUT") {
-        console.log("removing session");
-        setSession(null);
-        setProfile(null);
-        setIsAdmin(false);
-        return;
-      }
-      setSession(_session);
+      setSession(null);
+      setLoading(false);
     });
-
-    setLoading(false);
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
   }, []);
 
+  //   supabase.auth
+  //     .getSession()
+  //     .then(res => {
+  //       const {
+  //         data: { session }
+  //       } = res;
+  //       supabase.auth.onAuthStateChange((_event, session) => {
+  //         setSession(session);
+  //       });
+  //       setSession(session);
+  //       return session;
+  //     })
+  //     .then(session => {
+  //       if (session) {
+  //         supabase
+  //           .from("profiles")
+  //           .select("*")
+  //           .eq("id", session.user.id)
+  //           .single()
+  //           .then(res => {
+  //             const { data } = res;
+  //             setProfile(data || null);
+  //           });
+  //       }
+  //     })
+  //     .then(() => setLoading(false));
+  // }, []);
   // @ts-ignore
   return <AuthContext.Provider value={{ session, loading, profile, isAdmin }}>{children}</AuthContext.Provider>;
 }
