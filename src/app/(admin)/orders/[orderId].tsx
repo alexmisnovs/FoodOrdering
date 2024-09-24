@@ -6,7 +6,7 @@ import OrderListItem from "../../../components/OrderListItem";
 import OrderItemListItem from "@/src/components/OrderDetailsItem";
 import { OrderStatusList } from "@/src/types";
 import Colors from "@/src/constants/Colors";
-import { useOrderById } from "@/src/api/orders";
+import { useOrderDetailsById } from "@/src/api/orders";
 // import OrderItemListItem from "@/src/components/OrderDetailsItem";
 
 const OrderDetailScreen = () => {
@@ -16,7 +16,7 @@ const OrderDetailScreen = () => {
 
   // turn order id into string
 
-  const { data: order, error, isLoading } = useOrderById(id);
+  const { data: order, error, isLoading } = useOrderDetailsById(id);
 
   if (isLoading) {
     return <ActivityIndicator />;

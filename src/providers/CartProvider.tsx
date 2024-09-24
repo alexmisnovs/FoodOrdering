@@ -1,24 +1,33 @@
 import { useContext, createContext, PropsWithChildren, useState } from "react";
 import { type CartItem, type Tables } from "../types";
 import { randomUUID } from "expo-crypto";
+import { useInsertOrder } from "../api/orders";
+import { useRouter } from "expo-router";
 
 type Product = Tables<"products">;
 
 export interface iCart {
   items: CartItem[];
+  total: number;
   addItem: (product: Product, size: CartItem["size"]) => void;
   updateQuantity: (itemId: string, amount: 1 | -1) => void;
+  checkout: () => void;
 }
 
 const CartContext = createContext<iCart>({
   items: [],
+  total: 0,
   addItem: () => {},
-  updateQuantity: () => {}
+  updateQuantity: () => {},
+  checkout: () => {}
 });
 
 const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
+  const { mutate: insertOrder } = useInsertOrder();
+
+  const router = useRouter();
   const addItem = (product: Product, size: CartItem["size"]) => {
     //todo check if item already exists in cart increment quantity
 
@@ -51,7 +60,31 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     // console.log(itemId, amount);
   };
 
-  return <CartContext.Provider value={{ items, addItem, updateQuantity }}>{children}</CartContext.Provider>;
+  const total = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+
+  const clearCart = () => {
+    setItems([]);
+  };
+
+  const checkout = () => {
+    insertOrder(
+      { total },
+      {
+        onSuccess: (_, { id }) => {
+          console.log("Order created successfully");
+          console.log(id);
+          clearCart();
+          // router.push(`/(user)/orders/${}`)
+        },
+        onError: () => {
+          console.log("Error creating order");
+        }
+      }
+    );
+    console.warn("Checkout");
+  };
+
+  return <CartContext.Provider value={{ items, total, addItem, updateQuantity, checkout }}>{children}</CartContext.Provider>;
 };
 export const useCart = () => {
   return useContext(CartContext);
