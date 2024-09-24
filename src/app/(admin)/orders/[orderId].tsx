@@ -7,6 +7,7 @@ import OrderItemListItem from "@/src/components/OrderDetailsItem";
 import { OrderStatusList } from "@/src/types";
 import Colors from "@/src/constants/Colors";
 import { useOrderById } from "@/src/api/orders";
+// import OrderItemListItem from "@/src/components/OrderDetailsItem";
 
 const OrderDetailScreen = () => {
   const { orderId } = useLocalSearchParams();
@@ -25,20 +26,20 @@ const OrderDetailScreen = () => {
     return <Text>Failed to fetch products</Text>;
   }
   if (!order) return <Text>No orders</Text>;
-  if (!order.order_items) return <Text>No order items</Text>;
+  if (order.order_items.length < 1) return <Text>No order items</Text>;
 
   console.log(order);
+  console.log("Order items", order.order_items);
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ title: `Order #${order.id}` }} />
-
-      <OrderListItem order={order} />
+    <View style={{ padding: 10, gap: 20, flex: 1 }}>
+      <Stack.Screen options={{ title: `Order #${id}` }} />
 
       <FlatList
         data={order.order_items}
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
+        ListHeaderComponent={() => <OrderListItem order={order} />}
         ListFooterComponent={() => (
           <>
             <Text style={{ fontWeight: "bold" }}>Status</Text>
@@ -46,7 +47,7 @@ const OrderDetailScreen = () => {
               {OrderStatusList.map(status => (
                 <Pressable
                   key={status}
-                  onPress={() => console.warn("Update status")}
+                  // onPress={() => updateStatus(status)}
                   style={{
                     borderColor: Colors.light.tint,
                     borderWidth: 1,

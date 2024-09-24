@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import Colors from "../constants/Colors";
-import { Tables, OrderItem } from "../types";
-import { defaultPizzaImage } from "../config/general";
+import { OrderItem } from "../types";
 
+// type OrderItemListItemProps = {
+//   item: { products: Tables<"products"> } & Tables<"order_items">;
+// };
 type OrderItemListItemProps = {
   item: OrderItem;
 };
@@ -12,7 +14,6 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   if (!item.products) return <Text>No products</Text>;
   return (
     <View style={styles.container}>
-      <Image source={{ uri: item.products.image || defaultPizzaImage }} style={styles.image} resizeMode="contain" />
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{item.products.name}</Text>
         <View style={styles.subtitleContainer}>

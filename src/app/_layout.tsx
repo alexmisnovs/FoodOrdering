@@ -70,7 +70,7 @@ function RootLayoutNav() {
               //   }
               // }}
               >
-                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                <Stack.Screen name="(admin)" options={{ headerShown: true }} />
                 <Stack.Screen name="(user)" options={{ headerShown: true }} />
 
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />

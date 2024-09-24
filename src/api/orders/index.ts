@@ -42,7 +42,7 @@ export const useMyOrderList = () => {
   });
 };
 
-export const useOrderById = (id: number) => {
+export const useOrderDetailsById = (id: number) => {
   return useQuery({
     queryKey: ["orders", id],
     queryFn: async () => {
