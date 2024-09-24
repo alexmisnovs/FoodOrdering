@@ -1,21 +1,25 @@
 import { supabase } from "@/src/config/supabase";
-import { Tables } from "@/src/database.types";
+import { Tables, OrderStatus } from "@/src/types";
 import { useAuth } from "@/src/providers/AuthProvider";
 // import { Product } from "@/src/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useAdminOrderList = () => {
+// const queryClient = useQueryClient();
+
+export const useAdminOrderList = ({ archived = false }: { archived: boolean }) => {
+  const statuses: OrderStatus[] = archived ? ["DELIVERED"] : ["NEW", "COOKING", "DELIVERING"];
+
   return useQuery({
-    queryKey: ["orders"],
+    queryKey: ["orders", archived],
 
     queryFn: async () => {
       // I could override type it returns with .returns() function if I need to
       // const { data, error } = await supabase.from("orders").select("*").returns<Product[]>();
-      const { data, error } = await supabase.from("orders").select("*");
+      const { data: orders, error } = await supabase.from("orders").select("*").in("status", statuses);
       if (error) {
         throw new Error(error.message);
       }
-      return data;
+      return orders;
     }
   });
 };
@@ -38,11 +42,11 @@ export const useMyOrderList = () => {
   });
 };
 
-export const useOrder = (id: number) => {
-  return useQuery<Tables<"orders">>({
-    queryKey: ["product", id],
+export const useOrderById = (id: number) => {
+  return useQuery({
+    queryKey: ["orders", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*").eq("id", id).single();
+      const { data, error } = await supabase.from("orders").select("*, order_items(*, products(*))").eq("id", id).single();
       if (error) {
         throw new Error(error.message);
       }

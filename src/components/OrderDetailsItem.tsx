@@ -1,12 +1,31 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import Colors from "../constants/Colors";
-import { OrderItem } from "../types";
+import { Tables } from "../types";
 import { defaultPizzaImage } from "../config/general";
 
 type OrderItemListItemProps = {
-  item: OrderItem;
+  item: { products: Tables<"products"> } & Tables<"order_items">;
 };
+
+// interface OrderItemListItemProps {
+//   item: {
+//     created_at: string;
+//     id: number;
+//     order_id: number;
+//     product_id: number;
+//     quantity: number;
+//     size: string;
+//     products: {
+//       // Remove the | null part
+//       created_at: string;
+//       id: number;
+//       image: string | null;
+//       name: string;
+//       price: number;
+//     };
+//   };
+// }
 
 const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   return (

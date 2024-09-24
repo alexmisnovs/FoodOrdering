@@ -20,9 +20,9 @@ export type CartItem = {
   quantity: number;
 };
 
-export const OrderStatusList: OrderStatus[] = ["New", "Cooking", "Delivering", "Delivered"];
+export const OrderStatusList: OrderStatus[] = ["NEW", "COOKING", "DELIVERING", "DELIVERED"];
 
-export type OrderStatus = "New" | "Cooking" | "Delivering" | "Delivered";
+export type OrderStatus = "NEW" | "COOKING" | "DELIVERING" | "DELIVERED";
 
 export type Order = {
   id: number;
@@ -37,9 +37,9 @@ export type Order = {
 export type OrderItem = {
   id: number;
   product_id: number;
-  products: Product;
+  products: Product | null; // temp fix
   order_id: number;
-  size: PizzaSize;
+  size: PizzaSize | string; // temp fix since in the DB pizza size is a string
   quantity: number;
 };
 
