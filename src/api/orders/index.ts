@@ -15,7 +15,7 @@ export const useAdminOrderList = ({ archived = false }: { archived: boolean }) =
     queryFn: async () => {
       // I could override type it returns with .returns() function if I need to
       // const { data, error } = await supabase.from("orders").select("*").returns<Product[]>();
-      const { data: orders, error } = await supabase.from("orders").select("*").in("status", statuses);
+      const { data: orders, error } = await supabase.from("orders").select("*").in("status", statuses).order("created_at", { ascending: false });
       if (error) {
         throw new Error(error.message);
       }
@@ -33,7 +33,7 @@ export const useMyOrderList = () => {
       if (!id) return null;
       // I could override type it returns with .returns() function if I need to
       // const { data, error } = await supabase.from("orders").select("*").returns<Product[]>();
-      const { data, error } = await supabase.from("orders").select("*").eq("user_id", id);
+      const { data, error } = await supabase.from("orders").select("*").eq("user_id", id).order("created_at", { ascending: false });
       if (error) {
         throw new Error(error.message);
       }
@@ -64,7 +64,7 @@ export const useInsertOrder = () => {
     async mutationFn(data: InsertTables<"orders">) {
       const { data: newOrder, error } = await supabase
         .from("orders")
-        .insert({ ...data, user_id: userId })
+        .insert({ ...data, user_id: userId, status: "NEW" })
         .select()
         .single();
       if (error) {

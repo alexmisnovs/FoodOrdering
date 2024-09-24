@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import Colors from "../constants/Colors";
-import { OrderItem } from "../types";
+import { Tables, OrderItem } from "../types";
 
-// type OrderItemListItemProps = {
-//   item: { products: Tables<"products"> } & Tables<"order_items">;
-// };
 type OrderItemListItemProps = {
-  item: OrderItem;
+  item: { products: Tables<"products"> } & Tables<"order_items">;
 };
+// type OrderItemListItemProps = {
+//   item: OrderItem;
+// };
 
 const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   if (!item.products) return <Text>No products</Text>;
