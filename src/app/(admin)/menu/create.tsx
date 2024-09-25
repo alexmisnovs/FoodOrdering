@@ -7,6 +7,7 @@ import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
+import { uploadImage } from "@/src/helpers/upload";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -15,7 +16,15 @@ const CreateProductScreen = () => {
   const [image, setImage] = useState<string | null>(null);
 
   const { productId: idString } = useLocalSearchParams();
-  const productId = parseFloat(typeof idString === "string" ? idString : idString[0]);
+
+  let productId: number;
+
+  if (!idString) {
+    // no id passed - means we are creating.
+    productId = 0;
+  } else {
+    productId = parseFloat(typeof idString === "string" ? idString : idString[0]);
+  }
 
   const isUpdating = !!productId;
 
@@ -75,18 +84,19 @@ const CreateProductScreen = () => {
     return true;
   };
 
-  const onCreate = () => {
+  const onCreate = async () => {
     if (!validateInput()) {
       return;
     }
 
+    const imagePath = await uploadImage(image);
     // save to the database
     console.log(name, price);
     insertProduct(
       {
         name,
         price: parseFloat(price),
-        image
+        image: imagePath
       },
       {
         onSuccess: () => {
