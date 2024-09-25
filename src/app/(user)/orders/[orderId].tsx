@@ -4,11 +4,14 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "../../../components/OrderListItem";
 import OrderItemListItem from "@/src/components/OrderDetailsItem";
 import { useOrderDetailsById } from "@/src/api/orders";
+import { useUpdateOrderSubsciption } from "@/src/api/orders/subscription";
 
 const OrderDetailScreen = () => {
   const { orderId } = useLocalSearchParams();
 
   const id = parseInt(typeof orderId === "string" ? orderId : orderId[0]);
+
+  useUpdateOrderSubsciption(id);
 
   // turn order id into string
 
@@ -24,7 +27,7 @@ const OrderDetailScreen = () => {
   if (!order) return <Text>No orders</Text>;
   if (!order.order_items) return <Text>No order items</Text>;
 
-  console.log(order);
+  // console.log(order);
 
   if (!order) {
     return <Text>Order not found!</Text>;

@@ -18,7 +18,7 @@ const OrderDetailScreen = () => {
   const { mutate: updateOrder } = useUpdateOrder();
 
   const updateStatus = (status: string) => {
-    console.warn("Updating status", status);
+    // maybe use alert here? to give app more time to respond
     updateOrder({ orderId: id, updatedOrderFields: { status } });
     // it is a little bit slow to respond, so we might want to add loading state or something while updating
   };
@@ -35,8 +35,8 @@ const OrderDetailScreen = () => {
   if (!order) return <Text>No orders</Text>;
   if (order.order_items.length < 1) return <Text>No order items</Text>;
 
-  console.log(order);
-  console.log("Order items", order.order_items);
+  // console.log(order);
+  // console.log("Order items", order.order_items);
 
   return (
     <View style={{ padding: 10, gap: 20, flex: 1 }}>

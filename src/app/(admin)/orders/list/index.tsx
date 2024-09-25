@@ -3,7 +3,11 @@ import { ActivityIndicator, FlatList, Text } from "react-native";
 import OrderListItem from "@/src/components/OrderListItem";
 import { useAdminOrderList } from "@/src/api/orders";
 
+import { useInserOrderSubsciption } from "@/src/api/orders/subscription";
+
 export default function MenuScreen() {
+  useInserOrderSubsciption();
+
   const { data: orders, error, isLoading } = useAdminOrderList({ archived: false });
   // const product = products[1];
   //comment
