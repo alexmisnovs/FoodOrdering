@@ -3,6 +3,7 @@ import React from "react";
 import Colors from "../constants/Colors";
 import { Tables, InsertTables, OrderItem } from "../types";
 import { defaultPizzaImage } from "../config/general";
+import RemoteImage from "./RemoteImage";
 
 type OrderItemListItemProps = {
   // item: OrderItem;
@@ -13,7 +14,7 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   if (!item.products) return <Text>No products</Text>;
   return (
     <View style={styles.container}>
-      <Image source={{ uri: item.products.image || defaultPizzaImage }} style={styles.image} resizeMode="contain" />
+      <RemoteImage path={item.products?.image} fallback={defaultPizzaImage} style={styles.image} resizeMode="contain" />
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{item.products.name}</Text>
         <View style={styles.subtitleContainer}>
