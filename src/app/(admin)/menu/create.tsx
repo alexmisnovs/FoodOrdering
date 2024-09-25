@@ -8,6 +8,7 @@ import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
 import { uploadImage } from "@/src/helpers/upload";
+import RemoteImage from "@/src/components/RemoteImage";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -169,7 +170,7 @@ const CreateProductScreen = () => {
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
         <View style={styles.container}>
-          <Image source={{ uri: image || defaultPizzaImage }} style={styles.image} />
+          <RemoteImage path={image} fallback={defaultPizzaImage} style={styles.image} />
           <Text onPress={pickImage} style={styles.textButton}>
             Select Image
           </Text>
