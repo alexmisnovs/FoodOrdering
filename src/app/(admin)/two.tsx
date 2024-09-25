@@ -15,7 +15,7 @@ export default function TabTwoScreen() {
     await signOut();
 
     console.log("signed out, navigating now..");
-    router.replace("/" as any);
+    router.replace("/(auth)/sign-in" as any);
   };
 
   return (
