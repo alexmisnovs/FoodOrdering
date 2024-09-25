@@ -6,7 +6,7 @@ import OrderListItem from "../../../components/OrderListItem";
 import OrderItemListItem from "@/src/components/OrderDetailsItem";
 import { OrderStatusList } from "@/src/types";
 import Colors from "@/src/constants/Colors";
-import { useOrderDetailsById } from "@/src/api/orders";
+import { useOrderDetailsById, useUpdateOrder } from "@/src/api/orders";
 // import OrderItemListItem from "@/src/components/OrderDetailsItem";
 
 const OrderDetailScreen = () => {
@@ -15,6 +15,13 @@ const OrderDetailScreen = () => {
   const id = parseInt(typeof orderId === "string" ? orderId : orderId[0]);
 
   // turn order id into string
+  const { mutate: updateOrder } = useUpdateOrder();
+
+  const updateStatus = (status: string) => {
+    console.warn("Updating status", status);
+    updateOrder({ orderId: id, updatedOrderFields: { status } });
+    // it is a little bit slow to respond, so we might want to add loading state or something while updating
+  };
 
   const { data: order, error, isLoading } = useOrderDetailsById(id);
 
@@ -47,7 +54,7 @@ const OrderDetailScreen = () => {
               {OrderStatusList.map(status => (
                 <Pressable
                   key={status}
-                  // onPress={() => updateStatus(status)}
+                  onPress={() => updateStatus(status)}
                   style={{
                     borderColor: Colors.light.tint,
                     borderWidth: 1,
