@@ -1,18 +1,16 @@
 import { StyleSheet, Image, Pressable } from "react-native";
-import { Text, View } from "@/src/components/Themed";
+import { Text } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { Tables } from "@/src/types";
 import { Link, useSegments } from "expo-router";
 import { CURRENCY_SYMBOL, defaultPizzaImage } from "../config/general";
+import RemoteImage from "./RemoteImage";
 
 type ProductListItemProps = {
   product: Tables<"products">;
 };
 
 export default function ProductListItem({ product }: ProductListItemProps) {
-  //todo: add image placeholder if no image is found
-  if (!product.image) product.image = defaultPizzaImage;
-
   // to understand are we on user or admin side (user) or (admin)
   const segments = useSegments();
   // console.log(segments);
@@ -20,7 +18,7 @@ export default function ProductListItem({ product }: ProductListItemProps) {
   return (
     <Link href={`/${segments[0]}/menu/${product.id}` as any} asChild>
       <Pressable style={styles.container}>
-        <Image style={styles.image} source={{ uri: product.image }} resizeMode="contain" />
+        <RemoteImage style={styles.image} path={product?.image} fallback={defaultPizzaImage} resizeMode="contain" />
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>
           {CURRENCY_SYMBOL}

@@ -1,4 +1,14 @@
-import { StyleSheet, Text, TextInput, View, Image, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  Alert,
+} from "react-native";
 import { useEffect, useState } from "react";
 
 import { CURRENCY_SYMBOL, defaultPizzaImage } from "@/src/config/general";
@@ -6,7 +16,14 @@ import Button from "@/src/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from "@/src/api/products";
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useProduct,
+  useUpdateProduct,
+} from "@/src/api/products";
+import { uploadImage } from "@/src/helpers/upload";
+import RemoteImage from "@/src/components/RemoteImage";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
@@ -15,7 +32,15 @@ const CreateProductScreen = () => {
   const [image, setImage] = useState<string | null>(null);
 
   const { productId: idString } = useLocalSearchParams();
-  const productId = parseFloat(typeof idString === "string" ? idString : idString[0]);
+
+  let productId: number;
+
+  if (!idString) {
+    // no id passed - means we are creating.
+    productId = 0;
+  } else {
+    productId = parseFloat(typeof idString === "string" ? idString : idString[0]);
+  }
 
   const isUpdating = !!productId;
 
@@ -32,9 +57,10 @@ const CreateProductScreen = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1
+      quality: 1,
     });
 
+    console.log("image pick result");
     console.log(result);
 
     if (!result.canceled) {
@@ -75,39 +101,41 @@ const CreateProductScreen = () => {
     return true;
   };
 
-  const onCreate = () => {
+  const onCreate = async () => {
     if (!validateInput()) {
       return;
     }
 
+    const imagePath = await uploadImage(image);
     // save to the database
     console.log(name, price);
     insertProduct(
       {
         name,
         price: parseFloat(price),
-        image
+        image: imagePath,
       },
       {
         onSuccess: () => {
           resetForm();
           router.back();
-        }
+        },
       }
     );
     // resetForm();
   };
 
-  const onUpdate = () => {
+  const onUpdate = async () => {
     if (!validateInput()) {
       return;
     }
+    const imagePath = await uploadImage(image);
     updateProduct(
       {
         productId,
         name,
         price: parseFloat(price),
-        image
+        image: imagePath,
       },
       {
         onSuccess: () => {
@@ -116,7 +144,7 @@ const CreateProductScreen = () => {
         },
         onError(error) {
           console.log(error);
-        }
+        },
       }
     );
   };
@@ -137,7 +165,7 @@ const CreateProductScreen = () => {
       },
       onError(error) {
         console.log(error);
-      }
+      },
     });
     console.warn("Deleting product");
   };
@@ -146,9 +174,9 @@ const CreateProductScreen = () => {
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
-        style: "cancel"
+        style: "cancel",
       },
-      { text: "Delete", style: "destructive", onPress: onDelete }
+      { text: "Delete", style: "destructive", onPress: onDelete },
     ]);
   };
 
@@ -156,9 +184,18 @@ const CreateProductScreen = () => {
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <Stack.Screen options={{ title: isUpdating ? "Update Product" : "Create Product" }} />
 
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      >
         <View style={styles.container}>
-          <Image source={{ uri: image || defaultPizzaImage }} style={styles.image} />
+          {/* <RemoteImage path={image} fallback={defaultPizzaImage} style={styles.image} /> */}
+          <Image
+            source={{ uri: image || defaultPizzaImage }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+
           <Text onPress={pickImage} style={styles.textButton}>
             Select Image
           </Text>
@@ -168,7 +205,13 @@ const CreateProductScreen = () => {
           <TextInput value={name} onChangeText={setName} style={styles.input} placeholder="Name" />
           {/* Price */}
           <Text style={styles.label}>Price ({CURRENCY_SYMBOL})</Text>
-          <TextInput value={price} onChangeText={setPrice} keyboardType="numeric" style={styles.input} placeholder="9.99" />
+          <TextInput
+            value={price}
+            onChangeText={setPrice}
+            keyboardType="numeric"
+            style={styles.input}
+            placeholder="9.99"
+          />
           {/* Errors */}
           <Text style={styles.error}>{errors}</Text>
 
@@ -188,11 +231,11 @@ export default CreateProductScreen;
 
 const styles = StyleSheet.create({
   scrollContent: {
-    justifyContent: "center"
+    justifyContent: "center",
   },
   container: {
     flex: 1,
-    padding: 10
+    padding: 10,
   },
   input: {
     borderWidth: 1,
@@ -201,25 +244,25 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 20,
     backgroundColor: "white",
-    borderRadius: 5
+    borderRadius: 5,
   },
   label: {
     color: "gray",
     fontWeight: "bold",
-    fontSize: 20
+    fontSize: 20,
   },
   image: {
     width: "50%",
     aspectRatio: 1,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   textButton: {
     alignSelf: "center",
     fontWeight: "bold",
     color: Colors.light.tint,
-    marginVertical: 10
+    marginVertical: 10,
   },
   error: {
-    color: "red"
-  }
+    color: "red",
+  },
 });

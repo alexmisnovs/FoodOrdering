@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Pressable, ActivityIndicator } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 
@@ -11,6 +11,7 @@ import Button from "@/src/components/Button";
 import { useCart } from "@/src/providers/CartProvider";
 import { PizzaSize } from "@/src/types";
 import { useProduct } from "@/src/api/products";
+import RemoteImage from "@/src/components/RemoteImage";
 const ProductDetailScreen = () => {
   const router = useRouter();
   // get product from the router
@@ -44,7 +45,7 @@ const ProductDetailScreen = () => {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
-      <Image source={{ uri: product.image || defaultPizzaImage }} style={styles.image} />
+      <RemoteImage path={product?.image} fallback={defaultPizzaImage} style={styles.image} />
       <Text style={styles.title}>{product.name}</Text>
       <Text style={styles.price}>
         {CURRENCY_SYMBOL}

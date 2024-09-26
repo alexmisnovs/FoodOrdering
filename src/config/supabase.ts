@@ -2,6 +2,7 @@ import "react-native-url-polyfill/auto";
 import * as SecureStore from "expo-secure-store";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "../database.types";
+import Constants from "expo-constants";
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -15,8 +16,21 @@ const ExpoSecureStoreAdapter = {
   }
 };
 
-const supabaseUrl = "https://dkavmuhservmecvbadte.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrYXZtdWhzZXJ2bWVjdmJhZHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYwNDg4NjksImV4cCI6MjA0MTYyNDg2OX0.aUZuj1PBTJuDEpHKqp6gvz7xzl0Snf01yhitVoCIMqw";
+let supabaseUrl: string;
+
+// FOR DEV ONLY
+if (process.env.EXPO_PUBLIC_ENV === "dev") {
+  console.log("I am IN DEV MODE");
+  const origin = (Constants?.expoConfig as unknown as { hostUri?: string })?.hostUri?.split(":").shift();
+
+  if (!origin) throw new Error("Could not determine origin");
+
+  supabaseUrl = `http://${origin}:54321`;
+} else {
+  supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
+}
+
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {

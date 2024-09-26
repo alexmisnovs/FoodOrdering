@@ -1,20 +1,19 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import Colors from "../constants/Colors";
-import { Tables, InsertTables, OrderItem } from "../types";
-import { defaultPizzaImage } from "../config/general";
-import RemoteImage from "./RemoteImage";
+import { Tables, OrderItem } from "../types";
 
 type OrderItemListItemProps = {
-  // item: OrderItem;
-  item: { products: Tables<"products"> | null } & Tables<"order_items">;
+  item: { products: Tables<"products"> } & Tables<"order_items">;
 };
+// type OrderItemListItemProps = {
+//   item: OrderItem;
+// };
 
 const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   if (!item.products) return <Text>No products</Text>;
   return (
     <View style={styles.container}>
-      <RemoteImage path={item.products?.image} fallback={defaultPizzaImage} style={styles.image} resizeMode="contain" />
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{item.products.name}</Text>
         <View style={styles.subtitleContainer}>

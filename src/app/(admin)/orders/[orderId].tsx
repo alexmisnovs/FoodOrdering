@@ -1,31 +1,52 @@
-import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
-import orders from "../../../../assets/data/orders";
+// import orders from "../../../../assets/data/orders";
 
 import OrderListItem from "../../../components/OrderListItem";
 import OrderItemListItem from "@/src/components/OrderDetailsItem";
 import { OrderStatusList } from "@/src/types";
 import Colors from "@/src/constants/Colors";
+import { useOrderDetailsById, useUpdateOrder } from "@/src/api/orders";
+// import OrderItemListItem from "@/src/components/OrderDetailsItem";
 
 const OrderDetailScreen = () => {
   const { orderId } = useLocalSearchParams();
 
-  const order = orders.find(o => o.id.toString() === orderId);
+  const id = parseInt(typeof orderId === "string" ? orderId : orderId[0]);
 
-  if (!order) {
-    return <Text>Order not found!</Text>;
+  // turn order id into string
+  const { mutate: updateOrder } = useUpdateOrder();
+
+  const updateStatus = (status: string) => {
+    // maybe use alert here? to give app more time to respond
+    updateOrder({ orderId: id, updatedOrderFields: { status } });
+    // it is a little bit slow to respond, so we might want to add loading state or something while updating
+  };
+
+  const { data: order, error, isLoading } = useOrderDetailsById(id);
+
+  if (isLoading) {
+    return <ActivityIndicator />;
   }
 
-  return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ title: `Order #${order.id}` }} />
+  if (error) {
+    return <Text>Failed to fetch products</Text>;
+  }
+  if (!order) return <Text>No orders</Text>;
+  if (order.order_items.length < 1) return <Text>No order items</Text>;
 
-      <OrderListItem order={order} />
+  // console.log(order);
+  // console.log("Order items", order.order_items);
+
+  return (
+    <View style={{ padding: 10, gap: 20, flex: 1 }}>
+      <Stack.Screen options={{ title: `Order #${id}` }} />
 
       <FlatList
         data={order.order_items}
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
+        ListHeaderComponent={() => <OrderListItem order={order} />}
         ListFooterComponent={() => (
           <>
             <Text style={{ fontWeight: "bold" }}>Status</Text>
@@ -33,7 +54,7 @@ const OrderDetailScreen = () => {
               {OrderStatusList.map(status => (
                 <Pressable
                   key={status}
-                  onPress={() => console.warn("Update status")}
+                  onPress={() => updateStatus(status)}
                   style={{
                     borderColor: Colors.light.tint,
                     borderWidth: 1,
